@@ -1,11 +1,41 @@
-{% extends "blog/base.html" %}  
-  
-{% block title %}{{ post.title }}{% endblock %}  
-  
-{% block content %}  
-  <h1>{{ post.title }}</h1>  
-  <p class="date">  
+{% extends "blog/base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p class="date">
     Опубликовано {{ post.publish }} автором {{ post.author }}
-  </p>  
-  {{ post.body|linebreaks }}  
+</p>
+{{ post.body|linebreaks }}
+
+{% with comments.count as total_comments %}
+<h3>
+    комментариев: {{ total_comments }}
+</h3>
+{% endwith %}
+
+{% for comment in comments %}
+<div class="comment">
+    <p class="info">
+        Комментарий {{ forloop.counter }} автора {{ comment.name }}
+        {{ comment.created }}
+    </p>
+    {{ comment.body|linebreaks }}
+</div>
+{% empty %}
+<p>К посту пока нет комментариев.</p>
+{% endfor %}
+
+{% if new_comment %}
+<h2>Ваш комментарий добавлен.</h2>
+{% else %}
+<h3>Добавление комментария</h3>
+<form action="." method="post">
+    {{ comment_form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="Добавить комментарий"></p>
+</form>
+{% endif %}
+
 {% endblock %}
